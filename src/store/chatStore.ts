@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 import { useAuthStore } from './authStore'
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 export interface Message {
   id: string
@@ -126,13 +127,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
     
     try {
       // Call backend API with Cognito JWT
-      const jwt = useAuthStore.getState().user?.jwt
-      const response = await axios.post('http://localhost:3001/api/chat', {
-        message: message,
-        sessionId: chatId
-      }, {
-        headers: jwt ? { Authorization: `Bearer ${jwt}` } : {}
-      })
+      const session = await fetchAuthSession();
+      const jwt = session.tokens?.idToken?.toString();
+      console.log('Fresh JWT:', jwt);
+      console.log('JWT being sent:', jwt);
+      
+      const response = await axios.post(
+        'http://localhost:3001/api/chat',
+        { message, sessionId: chatId },
+        { headers: jwt ? { Authorization: `Bearer ${jwt}` } : {} }
+      );
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
