@@ -3,18 +3,31 @@ import { Amplify } from 'aws-amplify';
 
 Amplify.configure({
   Auth: {
-    region: import.meta.env.VITE_AWS_REGION,
-    userPoolId: import.meta.env.VITE_USER_POOL_ID,
-    userPoolWebClientId: import.meta.env.VITE_CLIENT_ID,
-    authenticationFlowType: 'USER_PASSWORD_AUTH',
-    oauth: {
-      domain: import.meta.env.VITE_COGNITO_DOMAIN, // e.g. myapp.auth.us-east-1.amazoncognito.com
-      scope: ['email', 'openid', 'profile'],
-      redirectSignIn: 'http://localhost:5173/',
-      redirectSignOut: 'http://localhost:5173/',
-      responseType: 'code', // or 'token'
+    Cognito: {
+      region: import.meta.env.VITE_AWS_REGION,
+      userPoolId: import.meta.env.VITE_USER_POOL_ID,
+      userPoolClientId: import.meta.env.VITE_CLIENT_ID,
+      loginWith: {
+        email: true,
+        phone: false,
+        username: false,
+      },
+      signUpVerificationMethod: 'code',
+      userAttributes: {
+        email: {
+          required: false,
+        },
+      },
+      allowGuestAccess: true,
+      passwordFormat: {
+        minLength: 8,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireNumbers: true,
+        requireSpecialCharacters: true,
+      },
     },
   } as any,
 });
 
-export default {}; 
+export default {};
