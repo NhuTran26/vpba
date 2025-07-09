@@ -1,4 +1,4 @@
-import { Plus, Settings, User, Moon, Sun } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useChatStore } from '../store/chatStore'
 import { useAuthStore } from '../store/authStore'
 // @ts-ignore

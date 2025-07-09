@@ -1,28 +1,43 @@
-import { Authenticator } from '@aws-amplify/ui-react'
-import '@aws-amplify/ui-react/styles.css'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../store/authStore'
+import React, { useEffect } from 'react';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from 'aws-amplify/auth';
 
-const Login: React.FC = () => {
-  const { isAuthenticated } = useAuthStore()
-  const navigate = useNavigate()
+// Component that handles the redirect logic
+const AuthRedirectHandler: React.FC = () => {
+  const navigate = useNavigate();
+  const { authStatus } = useAuthenticator((context) => [context.authStatus]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/chat')
-    }
-  }, [isAuthenticated, navigate])
+    const checkAuthAndRedirect = async () => {
+      if (authStatus === 'authenticated') {
+        try {
+          // Double-check that user is actually authenticated
+          await getCurrentUser();
+          navigate('/chat');
+        } catch (error) {
+          console.log('User not authenticated:', error);
+        }
+      }
+    };
 
-  if (isAuthenticated) return null
+    checkAuthAndRedirect();
+  }, [authStatus, navigate]);
 
+  return null; // This component doesn't render anything
+};
+
+const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center font-sans bg-gradient-to-br from-green-700 to-blue-900">
       <div className="max-w-md w-full space-y-8 p-8">
-        <Authenticator />
+        <Authenticator>
+          <AuthRedirectHandler />
+        </Authenticator>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

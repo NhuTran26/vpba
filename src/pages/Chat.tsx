@@ -6,6 +6,7 @@ import { useChatStore } from '../store/chatStore'
 // @ts-ignore
 import chatBg from '../assets/background.jpg'
 
+console.log('Chat page loaded');
 const Chat: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -41,6 +42,8 @@ const Chat: React.FC = () => {
     
     await sendMessage(message)
   }
+  console.log('Chat page loaded');
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -149,5 +152,7 @@ const Chat: React.FC = () => {
     </div>
   )
 }
+console.log('Chat page loaded');
+
 
 export default Chat

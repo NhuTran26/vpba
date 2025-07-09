@@ -11,6 +11,7 @@ interface AuthState {
   } | null
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  checkAuth: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -43,6 +44,21 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
           user: null
         })
+      },
+      checkAuth: async () => {
+        console.log('checkAuth called');
+        try {
+          const session = await fetchAuthSession();
+          console.log('fetchAuthSession result:', session);
+          if (session.tokens?.idToken) {
+            set({ isAuthenticated: true });
+          } else {
+            set({ isAuthenticated: false, user: null });
+          }
+        } catch (e) {
+          console.log('checkAuth error:', e);
+          set({ isAuthenticated: false, user: null });
+        }
       }
     }),
     {
