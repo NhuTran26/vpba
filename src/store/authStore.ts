@@ -1,13 +1,16 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { signIn, signOut, fetchAuthSession } from 'aws-amplify/auth'
+import '../amplifyConfig'
 
 interface AuthState {
   isAuthenticated: boolean
   user: {
     email: string
+    jwt?: string
   } | null
-  login: (email: string, password: string) => boolean
-  logout: () => void
+  login: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -15,18 +18,27 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       isAuthenticated: false,
       user: null,
-      login: (email: string, password: string) => {
-        // Hard-coded credentials
-        if (email === 'admin@gmail.com' && password === '123456') {
-          set({
-            isAuthenticated: true,
-            user: { email }
-          })
-          return true
+      login: async (email: string, password: string) => {
+        try {
+          const { isSignedIn } = await signIn({ username: email, password })
+          if (isSignedIn) {
+            const session = await fetchAuthSession()
+            const jwt = session.tokens?.idToken?.toString() || ''
+            set({
+              isAuthenticated: true,
+              user: { email, jwt }
+            })
+          } else {
+            set({ isAuthenticated: false, user: null })
+            throw new Error('Sign in not complete')
+          }
+        } catch (error) {
+          set({ isAuthenticated: false, user: null })
+          throw error
         }
-        return false
       },
-      logout: () => {
+      logout: async () => {
+        await signOut()
         set({
           isAuthenticated: false,
           user: null

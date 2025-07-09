@@ -1,20 +1,25 @@
 {
-  "name": "backend",
+  "name": "vpba-backend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["vpbank", "bedrock", "cognito", "authentication"],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "VPBank AI Assistant Backend with AWS Cognito Authentication",
   "dependencies": {
     "@aws-sdk/client-bedrock-agent": "^3.840.0",
     "@aws-sdk/client-bedrock-agent-runtime": "^3.840.0",
+    "aws-jwt-verify": "^4.0.1",
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

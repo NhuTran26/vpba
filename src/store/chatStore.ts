@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
+import { useAuthStore } from './authStore'
 
 export interface Message {
   id: string
@@ -124,10 +125,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }))
     
     try {
-      // Call backend API
+      // Call backend API with Cognito JWT
+      const jwt = useAuthStore.getState().user?.jwt
       const response = await axios.post('http://localhost:3001/api/chat', {
         message: message,
         sessionId: chatId
+      }, {
+        headers: jwt ? { Authorization: `Bearer ${jwt}` } : {}
       })
       
       const assistantMessage: Message = {
