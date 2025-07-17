@@ -107,7 +107,7 @@ const Sidebar: React.FC = () => {
             onBlur={handleProfileBlur}
           >
             <div className="text-sm font-medium text-white truncate">
-              {user?.email || 'andrew.neilson@vpbank.com.vn'}
+              {user?.email || 'quan.vladimir47@gmail.com'}
             </div>
             <div className="text-xs text-white/70 truncate">Banker</div>
             {popoverOpen && (
